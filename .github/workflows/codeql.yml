@@ -21,7 +21,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: windows-2019
     permissions:
       actions: read
       contents: read
@@ -30,12 +30,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp', python' ]
+        language: [ 'cpp' ]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
         # Use only 'java' to analyze code written in Java, Kotlin or both
         # Use only 'javascript' to analyze code written in JavaScript, TypeScript or both
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
-
+        configuration: [Release, Debug]
+        platform: [x86, x64]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -68,6 +69,8 @@ jobs:
     #     echo "Run, Build Application using script"
     #     ./location_of_script_within_repo/buildscript.sh
 
+    - name: Build
+      run: msbuild 'openedr/edrav2/build/vs2019/edrav2.sln' /p:configuration=${{ matrix.configuration }} /p:platform=${{ matrix.platform }}
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
       with:
